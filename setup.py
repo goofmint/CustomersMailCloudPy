@@ -1,7 +1,7 @@
 import setuptools
  
 setuptools.setup(
-    name="Customers Mail Cloud",
+    name="CustomersMailCloud",
     version="1.0",
     author="Atsushi",
     author_email="atsushi@moongift.jp",

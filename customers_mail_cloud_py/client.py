@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-class Client:
+class CustomersMailCloud:
     def __init__(self):
         self.endpoints = [
             
