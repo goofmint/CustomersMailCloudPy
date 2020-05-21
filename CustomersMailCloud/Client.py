@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import urllib.request
+import requests
 import json
+import os
 
 class CustomersMailCloud:
     def __init__(self, api_user, api_key):
@@ -15,18 +16,18 @@ class CustomersMailCloud:
         }
         self.api_user = api_user
         self.api_key = api_key
-        self.url = "";
-        self.to_address = [];
-        self.from_address = {};
-        self.subject = '';
-        self.text = '';
-        self.html = '';
-        self.attachments = [];
+        self.url = ""
+        self.to_address = []
+        self.from_address = {}
+        self.subject = ''
+        self.text = ''
+        self.html = ''
+        self.attachments = []
 
     def trial(self):
-        self.url = self.endpoints['trial'];
+        self.url = self.endpoints['trial']
     def standard(self):
-        self.url = self.endpoints['standard'];
+        self.url = self.endpoints['standard']
     def pro(self, subdomain):
         if (subdomain is None or subdomain == ''):
             raise Exception('サブドメインは必須です')
@@ -41,6 +42,8 @@ class CustomersMailCloud:
             'name': name,
             'address': address
         }
+    def addFile(self, file):
+        self.attachments.append(file)
     def send(self):
         if (self.url == ''):
              raise Exception('契約プランを選択してください（trial/standard/pro）')
@@ -63,18 +66,24 @@ class CustomersMailCloud:
         }
         
         if (self.html != ''):
-            params.html = self.html;
-        
-        json_data = json.dumps(params).encode('utf-8')
-        method = 'POST'
-        headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-        request = urllib.request.Request(self.url, data=json_data, method=method, headers=headers)
-        try:
-            with urllib.request.urlopen(request) as response:
-                response_body = response.read().decode('utf-8')
-            return json.dumps(response_body)
-        except urllib.error.HTTPError as err:
-            raise Exception(err.read())
+            params.html = self.html
+        if len(self.attachments) > 0:
+            params["attachments"] = len(self.attachments)
+            files = {}
+            for key in params:
+                if type(params[key]) is not str:
+                    params[key] = json.dumps(params[key])
+            for i, attachment in enumerate(self.attachments):
+                file = open(attachment, 'rb')
+                files[f"attachment{str(i + 1)}"] = (os.path.basename(attachment), file)
+            res = requests.post(self.url, data=params, files=files)
+        else:
+            headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+            res = requests.post(self.url, json=params, headers=headers)
+        if res.status_code == 200:
+            return json.loads(res.content)
+        else:
+            raise Exception(res.content)

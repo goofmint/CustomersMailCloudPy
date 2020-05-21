@@ -20,6 +20,13 @@ except Exception as e:
     print(e)
 ```
 
+### Add attachment
+
+```py
+client.addFile('/path/to/file1')
+client.addFile('/path/to/file2')
+```
+
 ## License
 
 MIT
