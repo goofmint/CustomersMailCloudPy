@@ -23,7 +23,7 @@ class CustomersMailCloud:
         self.text = ''
         self.html = ''
         self.env_from = ''
-        self.reply_to = ''
+        self.reply_to = {}
         self.headers = {}
         self.charset = 'UTF-8'
         self.attachments = []
@@ -43,6 +43,11 @@ class CustomersMailCloud:
         })
     def setFrom(self, name, address):
         self.from_address = {
+            'name': name,
+            'address': address
+        }
+    def setReplyTo(self, name, address):
+        self.reply_to = {
             'name': name,
             'address': address
         }
@@ -72,7 +77,7 @@ class CustomersMailCloud:
         
         if (self.env_from != ''):
             params["envfrom"] = self.env_from
-        if (self.reply_to != ''):
+        if (self.reply_to != {}):
             params["replyto"] = self.reply_to
         if (self.headers != {}):
             self.headers = []
