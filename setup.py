@@ -2,7 +2,7 @@ import setuptools
  
 setuptools.setup(
     name="CustomersMailCloud",
-    version="1.1",
+    version="1.2.1",
     author="Atsushi",
     author_email="atsushi@moongift.jp",
     description="Python library for Customers Mail Cloud",

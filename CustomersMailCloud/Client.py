@@ -22,6 +22,10 @@ class CustomersMailCloud:
         self.subject = ''
         self.text = ''
         self.html = ''
+        self.env_from = ''
+        self.reply_to = ''
+        self.headers = {}
+        self.charset = 'UTF-8'
         self.attachments = []
 
     def trial(self):
@@ -46,7 +50,7 @@ class CustomersMailCloud:
         self.attachments.append(file)
     def send(self):
         if (self.url == ''):
-             raise Exception('契約プランを選択してください（trial/standard/pro）')
+            raise Exception('契約プランを選択してください（trial/standard/pro）')
         if (self.from_address['address'] is None or self.from_address['address'] == ''):
             raise Exception('送信元アドレスは必須です')
         if (len(self.to_address) == 0):
@@ -57,16 +61,28 @@ class CustomersMailCloud:
             raise Exception('メール本文は必須です')
         
         params = { 
-          'api_user': self.api_user,
-          'api_key': self.api_key,
-          'to': self.to_address,
-          'from': self.from_address,
-          'subject': self.subject,
-          'text': self.text
+            'api_user': self.api_user,
+            'api_key': self.api_key,
+            'to': self.to_address,
+            'from': self.from_address,
+            'subject': self.subject,
+            'charset': self.charset,
+            'text': self.text
         }
         
+        if (self.env_from != ''):
+            params["envfrom"] = self.env_from
+        if (self.reply_to != ''):
+            params["replyto"] = self.reply_to
+        if (self.headers != {}):
+            self.headers = []
+            for key in self.headers:
+                self.headers.append({
+                    'name': key,
+                    'value': self.headers[key]
+                })
         if (self.html != ''):
-            params.html = self.html
+            params["html"] = self.html
         if len(self.attachments) > 0:
             params["attachments"] = len(self.attachments)
             files = {}
